@@ -10,6 +10,7 @@ import Lights from "./Lights";
 // import Loader from "./Loader";
 import { Suspense } from "react";
 import IPhone from "./IPhone";
+import Loader from "./Loader";
 
 const ModelView = ({
   index,
@@ -27,28 +28,13 @@ const ModelView = ({
       className={`w-full h-full absolute ${index === 2 ? "right-[-100%]" : ""}`}
     >
       {/* Ambient Light */}
-      <ambientLight intensity={0.3} />
+      <ambientLight intensity={0.5} />
 
       <PerspectiveCamera makeDefault position={[0, 0, 4]} />
 
       <Lights />
 
-      <Suspense
-        fallback={
-          <Html>
-            <div>Loading</div>
-          </Html>
-        }
-      >
-        <IPhone />
-        {/* <IPhone
-          scale={index === 1 ? [15, 15, 15] : [17, 17, 17]}
-          item={item}
-          size={size}
-        /> */}
-      </Suspense>
-
-      {/* <OrbitControls
+      <OrbitControls
         makeDefault
         ref={controlRef}
         enableZoom={false}
@@ -63,14 +49,14 @@ const ModelView = ({
         name={`${index === 1} ? 'small' : 'large`}
         position={[0, 0, 0]}
       >
-        <Suspense fallback={<div>Loading</div>}>
+        <Suspense fallback={<Loader />}>
           <IPhone
             scale={index === 1 ? [15, 15, 15] : [17, 17, 17]}
             item={item}
             size={size}
           />
         </Suspense>
-      </group> */}
+      </group>
     </View>
   );
 };

@@ -1,27 +1,21 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ModelView from "./ModelView";
 import { models, sizes } from "../constants";
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
+import { animateWithGsapTimeline } from "../utils/animations";
 
 const Model = () => {
   // TODO: change the text for Pro max versions while selecting bigger size
   const [size, setSize] = useState("small");
   const [model, setModel] = useState(models[0]);
 
-  useGSAP(() => {
-    gsap.to("#heading", {
-      y: 0,
-      opacity: 1,
-    });
-  }, []);
-
   //   camera control for model view
-  const cameraControlPro = useRef();
-  const cameraControlProMax = useRef();
+  const cameraControlIphonePro = useRef();
+  const cameraControlIphoneProMax = useRef();
 
   //   model
   const iphonePro = useRef(new THREE.Group());
@@ -30,6 +24,42 @@ const Model = () => {
   //   rotation
   const [iphoneProRotation, setIphoneProRotation] = useState(0);
   const [iphoneProMaxRotation, setIphoneProMaxRotation] = useState(0);
+
+  const tl = gsap.timeline();
+
+  useEffect(() => {
+    if (size === "large") {
+      animateWithGsapTimeline(
+        tl,
+        iphonePro,
+        iphoneProRotation,
+        "#view1",
+        "#view2",
+        {
+          transform: "translateX(-100%)",
+          duration: 2,
+        }
+      );
+    }
+
+    if (size === "small") {
+      animateWithGsapTimeline(
+        tl,
+        iphoneProMax,
+        iphoneProMaxRotation,
+        "#view2",
+        "#view1",
+        {
+          transform: "translateX(0)",
+          duration: 2,
+        }
+      );
+    }
+  }, [size]);
+
+  useGSAP(() => {
+    gsap.to("#heading", { y: 0, opacity: 1 });
+  }, []);
 
   return (
     <section className="common-padding">
@@ -44,7 +74,7 @@ const Model = () => {
               index={1}
               groupRef={iphonePro}
               gsapType="view1"
-              controlRef={cameraControlPro}
+              controlRef={cameraControlIphonePro}
               setRotationState={setIphoneProRotation}
               item={model}
               size={size}
@@ -53,14 +83,22 @@ const Model = () => {
               index={2}
               groupRef={iphoneProMax}
               gsapType="view2"
-              controlRef={cameraControlProMax}
+              controlRef={cameraControlIphoneProMax}
               setRotationState={setIphoneProMaxRotation}
               item={model}
               size={size}
             />
 
             <Canvas
-              className="w-full h-full fixed top-0 bottom-0 left-0 right-0"
+              className="w-full h-full"
+              style={{
+                position: "fixed",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                overflow: "hidden",
+              }}
               eventSource={document.getElementById("root")}
             >
               <View.Port />
