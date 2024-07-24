@@ -5,7 +5,7 @@ import ModelView from "./ModelView";
 import { models, sizes } from "../constants";
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { View } from "@react-three/drei";
+import { isWebGL2Available, View } from "@react-three/drei";
 import { animateWithGsapTimeline } from "../utils/animations";
 
 const Model = () => {
@@ -69,43 +69,58 @@ const Model = () => {
         </h1>
 
         <div className="flex flex-col items-center mt-5">
-          <div className="w-full h-[75vh] md:h-[90vh] overflow-hidden relative">
-            <ModelView
-              index={1}
-              groupRef={iphonePro}
-              gsapType="view1"
-              controlRef={cameraControlIphonePro}
-              setRotationState={setIphoneProRotation}
-              item={model}
-              size={size}
-            />
-            <ModelView
-              index={2}
-              groupRef={iphoneProMax}
-              gsapType="view2"
-              controlRef={cameraControlIphoneProMax}
-              setRotationState={setIphoneProMaxRotation}
-              item={model}
-              size={size}
-            />
+          {isWebGL2Available() ? (
+            <div className="w-full h-[75vh] md:h-[90vh] overflow-hidden relative">
+              <ModelView
+                index={1}
+                groupRef={iphonePro}
+                gsapType="view1"
+                controlRef={cameraControlIphonePro}
+                setRotationState={setIphoneProRotation}
+                item={model}
+                size={size}
+              />
+              <ModelView
+                index={2}
+                groupRef={iphoneProMax}
+                gsapType="view2"
+                controlRef={cameraControlIphoneProMax}
+                setRotationState={setIphoneProMaxRotation}
+                item={model}
+                size={size}
+              />
 
-            <Canvas
-              className="w-full h-full"
-              style={{
-                position: "fixed",
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                overflow: "hidden",
-              }}
-              eventSource={document.getElementById("root")}
-            >
-              <View.Port />
-            </Canvas>
-          </div>
+              <Canvas
+                className="w-full h-full"
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  overflow: "hidden",
+                }}
+                eventSource={document.getElementById("root")}
+              >
+                <View.Port />
+              </Canvas>
+            </div>
+          ) : (
+            <div className="w-full h-[75vh] md:h-[90vh] overflow-hidden flex justify-center items-center">
+              <h1>
+                WebGL is not supported on your browser or device. Please try
+                updating your browser or using a different one.
+              </h1>
+            </div>
+          )}
+
           <div className="mx-auto w-full">
-            <p className="text-sm font-light text-center mb-5">{model.title}</p>
+            <p className="text-sm font-light text-center mb-5">
+              {`iPhone 15 Pro 
+              ${size === "small" ? "" : "Max"} in 
+              ${model.title}
+              `}
+            </p>
             <div className="flex-center">
               <ul className="color-container">
                 {models.map((model) => (
